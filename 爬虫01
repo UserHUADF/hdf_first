@@ -1,4 +1,157 @@
 #爬虫的目标是爬取目标网站的内容
 
-import request
+    1 	#这里引入软件包requests
+    2 	import requests
+    3 	
+    4 	def main():
+    5 	    #定义url地址
+    6 	    url="https://www.4399dmw.com/search/dh-1-0-0-0-0-1-0/"
+    7 	    #定义请求头
+    8 	    headers={
+    9 	        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
+   10 	    }
+   11 	    resp = requests.get(url=url,headers=headers)
+   12 	    #这里打开文件句柄
+   13 	    with open("a.txt","wb+") as f:
+   14 	        #这里是常规写入文件：
+   15 	        f.write(resp.content)
+   16 	    pass
+   17 	
+   18 	if __name__ == '__main__':
+   19 	    main()
+有几个注意点：
+上述的软件包需要下载，请求头是headers
+运行成功之后不会产生返回，
+
+文件夹中可以看见下载的文件a.txt
+
+
+------------------------------------------------------------------------------------
+下面开始修改url：
+
+    1 	    #定义url地址
+    2 	    url="https://www.4399dmw.com/search/dh-1-0-0-0-0-{}-0/"#这里将原本的1改为大括号，可以修改
+    3 	    #定义url列表
+    4 	    url_list = []
+    5 	    #定义返回头
+    6 	    headers={
+    7 	        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
+    8 	    }
+    9 	    #访问两次并写入
+   10 	    for i in range(3):
+   11 	        url_list.append(url.format(i))
+   12 	    #打印地址的列表
+   13 	    print(url_list)
+   14 	    #遍历地址列表并发送请求
+   15 	    for item in url_list:
+   16 	        resp = requests.get(url=item,headers=headers)
+   17 	        #这里打开文件句柄，根据页面的不同设置不同的文件名，这里注意i是数值，str(i)是字符串
+   18 	        with open("a"+str(i)+".txt","wb+") as f:
+   19 	            #这里是常规写入文件：
+   20 	            f.write(resp.content)
+
+另外一种：
+    1 	#定义url地址
+    2 	    url="https://www.4399dmw.com/search/dh-1-0-0-0-0-{}-0/"#这里将原本的1改为大括号，可以修改
+    3 	    #定义返回头
+    4 	    headers={
+    5 	        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
+    6 	    }
+    7 	    #访问14次并写入
+    8 	    for i in range(14):
+    9 	        url1 = url.format(i)
+   10 	        print(url1)
+   11 	        resp = requests.get(url=url1,headers=headers)
+   12 	        #这里打开文件句柄，根据页面的不同设置不同的文件名，这里注意i是数值，str(i)是字符串
+   13 	        with open("a"+str(i)+".txt","wb+") as f:
+   14 	            #这里是常规写入文件：
+   15 	            f.write(resp.content)
+   16 	    pass
+运行之后会获取到第0-13的页面代码
+
+--------------------------------------------------
+
+使用代理：
+快代理有免费的代理
+
+代理是一种反爬虫的手段，
+可以防止自己的ip/地址被泄露
+代理有很多种类，例如
+http https socks4 socks5
+    1 	#定义url地址
+    2 	    url="https://www.4399dmw.com/search/dh-1-0-0-0-0-{}-0/"#这里将原本的1改为大括号，可以修改
+    3 	    #定义返回头
+    4 	    headers={
+    5 	        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/109.0"
+    6 	    }
+    7 	    #代理
+    8 	    proxies = {"HTTP":"http://121.13.252.60:9999"}
+    9 	    url1 = url.format("1")
+   10 	    print(url1)
+   11 	    resp = requests.get(url=url1,headers=headers,proxies=proxies)
+   12 	    #这里打开文件句柄，根据页面的不同设置不同的文件名，这里注意i是数值，str(i)是字符串
+   13 	    with open("a.txt","wb+") as f:
+   14 	        #这里是常规写入文件：
+   15 	        f.write(resp.content)
+注意：如果使用的是socks5代理，代理要写成如下的类型
+proxies = {"HTTP":"socks5://123.123.123.123:9999"}
+
+匿名代理：
+知道你用代理，但是不知道你是谁。
+
+混淆代理：
+知道你用的是代理，但是获取到的是假的ip地址
+
+高匿代理：
+无法发现你在使用代理
+
+-------------------------------------------------------------------------
+
+反爬虫侦测：
+大多数情况下需要限制一段时间内的ip访问频率
+检查cookie，session，user-agent，referer，header等参数
+例如上述的实验，请求头只有User-agent，肯定有问题
+屏蔽某些服务器提供商
+需要ip地址池的更新
+
+-------------------------------------------------------------------------
+处理sessions（用户登录维持）
+实例化sessions之后可以维持登录状态
+通过网页的表单知道post的信息，但是网站内部的情况需要登录之后带着session/cookie信息才能访问
+
+    1 	#定义url地址
+    2 	    url="这里是sql的第二十关"
+    3 	    #定义返回头
+    4 	    headers={
+    5 	        "User-Agent": "此处信息我没有放“
+    6 	    }
+    7 	    data = {"uname"="admin","passwd"="admin"}
+    8 	    #实例化sessions
+    9 	    session = requests.session()
+   10 	
+   11 	    #发送POST请求提交用户名和密码
+   12 	    session.post(url,headers=headers,data=data)
+   13 	    #此时的session里面已经有cookies，可以直接利用cookies去get登录后的任何界面
+   14 	    res = session.get(url,headers=headers)
+   15 	    print(res.cotent.decode("utf-8"))
+
+------------------------------------------------------------------------
+处理cookie直接登录的情况：
+直接在headers里面加uname是错误的，可以使用cookie_dict的形式来直接调用
+这里cookie直接就是uname=admin
+
+
+    1 	    #定义url地址
+    2 	    url="http://sqlilabs.njhack.xyz/Less-20/"
+    3 	    #定义返回头
+    4 	    headers={
+    5 	        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.78"
+    6 	            }
+    7 	    cookie_dict = {"uname":"admin","passwd":"admin"}#我这里加上了passwd
+    8 	    res = requests.get(url,headers,cookies=cookie_dict)
+    9 	    print(res.content.decode("utf-8"))
+
+cookie改为只有uname，也可以正常访问
+
+
 
