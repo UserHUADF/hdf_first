@@ -1,0 +1,76 @@
+https://www.onlinedatagenerator.com/
+上述网站是一个在线数据生成器
+利用上述数据生成网站生成一个数据json，包含：
+
+放在本机的www目录下（这里我改了名字为test.json）
+
+下面我们将该文件作为json接口
+
+    1 	import requests
+    2 	import json
+    3 	
+    4 	def main():
+    5 	    url="http://127.0.0.1/test.json"
+    6 	    headers ={
+    7 	        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
+    8 	        "Referer":"http://www.baidu.com"#有些接口或者网站你直接访问不允许，加上来源就可以访问
+    9 	    }
+   10 	    resp = requests.get(url=url,headers=headers)
+   11 	    json_str = resp.content.decode("utf-8")
+   12 	    print(json_str)
+   13 	if __name__ == '__main__':
+   14 	    main()
+直接运行可以取出json中的内容。
+
+下面我们将上述取出的json数据重新转化为json格式
+    1 	ret1 = json.loads(json_str)
+    2 	print(ret1)
+
+
+----------------------------------------------------------------------------------------
+我们想要取出特定的数据，比如第五个人的email：
+    1 	print(ret1['objects'][4]["EmailAddress"])
+------------------------------------------------------------------------------------------------------------------------------
+保存写入文件：
+    1 	#保存一下
+    2 	with open("a.txt","w",encoding="utf-8") as f:#写入方法
+    3 	        f.write(json.dumps(ret1,ensure_ascii=False,indent=2))
+    4 	        #使用json.dumps方法写入，ensure_ascii=False会显示中文，indent会将子节点向后移2个空格
+    
+
+    1 	import requests
+    2 	import json
+    3 	from pprint import pprint
+    4 	def main():
+    5 	    url="http://127.0.0.1/test.json"
+    6 	    headers ={
+    7 	        "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
+    8 	        "Referer":"http://www.baidu.com"#有些接口或者网站你直接访问不允许，加上来源就可以访问
+    9 	    }
+   10 	    resp = requests.get(url=url,headers=headers)
+   11 	    json_str = resp.content.decode("utf-8")
+   12 	    # print(json_str)
+   13 	    ret1 = json.loads(json_str)#使用json.loads方法转化为json类型
+   14 	    print(ret1['objects'][4]["EmailAddress"])
+   15 	    #美化打印
+   16 	    pprint(ret1)
+   17 	
+   18 	    #保存一下
+   19 	    with open("a.txt","w",encoding="utf-8") as f:#写入方法
+   20 	        f.write(json.dumps(ret1,ensure_ascii=False,indent=2))
+   21 	        #使用json.dumps方法写入，ensure_ascii=False会显示中文，indent会将子节点向后移2个空格
+   22 	if __name__ == '__main__':
+   23 	    main()
+除了写入，还有读取：
+    1 	#读取json
+    2 	with open("a.txt","r",encoding="utf-8") as f:
+    3 		ret2 = json.load(f)
+    4 		print(ret2)
+
+------------------------------------------------------------------------------------
+Beautiful Soup代替正则表达式，解析网页源码
+from bs4 import BeautifulSoup
+
+xpath ！！！yyds
+
+
